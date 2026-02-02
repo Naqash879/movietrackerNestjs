@@ -7,13 +7,13 @@ export const axiosRequest = axios.create({
 export const handleError = (err: unknown) => {
   if (err instanceof AxiosError) {
     const message =
-      err.response?.data?.error?.message ||
-      err.message ||
+      err.response?.data?.message ??
+      err?.message ??
       "this error is comes from Axios Error";
     return { message };
   }
   if (err instanceof Error) {
-    const message = err.message || "error comes from Default Error";
+    const message = err?.message ?? "error comes from Default Error";
     return { message };
   } else {
     const message = "Something went wrong";
