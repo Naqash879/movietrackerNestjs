@@ -1,9 +1,12 @@
 import { SignUpDto } from './dto/signUp.dto';
 import { UserDocument } from './schema/auth.schema';
 import { Model } from 'mongoose';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 export declare class AuthService {
     private userModel;
-    constructor(userModel: Model<UserDocument>);
+    private jwtService;
+    constructor(userModel: Model<UserDocument>, jwtService: JwtService);
     signUp(dto: SignUpDto): Promise<{
         message: string;
         user: {
@@ -11,5 +14,27 @@ export declare class AuthService {
             email: string;
             role: string;
         };
+    }>;
+    loginCheck(dto: LoginDto): Promise<{
+        message: string;
+        userData: {
+            _id: import("mongoose").Types.ObjectId;
+            $locals: Record<string, unknown>;
+            $op: "save" | "validate" | "remove" | null;
+            $where: Record<string, unknown>;
+            baseModelName?: string;
+            collection: import("mongoose").Collection;
+            db: import("mongoose").Connection;
+            errors?: import("mongoose").Error.ValidationError;
+            isNew: boolean;
+            schema: import("mongoose").Schema;
+            name: string;
+            email: string;
+            role: string;
+            __v: number;
+            id: string;
+        };
+        accessToken: string;
+        refreshToken: string;
     }>;
 }

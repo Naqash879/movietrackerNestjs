@@ -16,6 +16,7 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const signUp_dto_1 = require("./dto/signUp.dto");
+const login_dto_1 = require("./dto/login.dto");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -24,6 +25,20 @@ let AuthController = class AuthController {
     async signUp(dto) {
         const data = await this.authService.signUp(dto);
         return { data };
+    }
+    async login(dto, res) {
+        const { message, userData, accessToken, refreshToken } = await this.authService.loginCheck(dto);
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000,
+        });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return { message, userData, accessToken, refreshToken };
     }
     test() {
         return { message: 'this controller' };
@@ -37,6 +52,14 @@ __decorate([
     __metadata("design:paramtypes", [signUp_dto_1.SignUpDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUp", null);
+__decorate([
+    (0, common_1.Post)('loginCheck'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Get)('test'),
     __metadata("design:type", Function),

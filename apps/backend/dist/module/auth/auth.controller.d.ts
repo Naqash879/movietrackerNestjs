@@ -1,5 +1,7 @@
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signUp.dto';
+import { LoginDto } from './dto/login.dto';
+import type { Response } from 'express';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
@@ -12,6 +14,28 @@ export declare class AuthController {
                 role: string;
             };
         };
+    }>;
+    login(dto: LoginDto, res: Response): Promise<{
+        message: string;
+        userData: {
+            _id: import("mongoose").Types.ObjectId;
+            $locals: Record<string, unknown>;
+            $op: "save" | "validate" | "remove" | null;
+            $where: Record<string, unknown>;
+            baseModelName?: string;
+            collection: import("mongoose").Collection;
+            db: import("mongoose").Connection;
+            errors?: import("mongoose").Error.ValidationError;
+            isNew: boolean;
+            schema: import("mongoose").Schema;
+            name: string;
+            email: string;
+            role: string;
+            __v: number;
+            id: string;
+        };
+        accessToken: string;
+        refreshToken: string;
     }>;
     test(): {
         message: string;

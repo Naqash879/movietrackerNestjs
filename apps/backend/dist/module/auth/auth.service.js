@@ -21,10 +21,13 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = require("@nestjs/mongoose");
 const auth_schema_1 = require("./schema/auth.schema");
 const mongoose_2 = require("mongoose");
+const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
     userModel;
-    constructor(userModel) {
+    jwtService;
+    constructor(userModel, jwtService) {
         this.userModel = userModel;
+        this.jwtService = jwtService;
     }
     async signUp(dto) {
         try {
@@ -55,11 +58,51 @@ let AuthService = class AuthService {
             throw new common_1.InternalServerErrorException(error?.message || 'Something went wrong');
         }
     }
+    async loginCheck(dto) {
+        try {
+            const user = await this.userModel
+                .findOne({ email: dto.email })
+                .select('+password');
+            if (!user) {
+                throw new common_1.UnauthorizedException('User not found');
+            }
+            const checkPassword = await bcrypt_1.default.compare(dto.password, user.password);
+            if (!checkPassword) {
+                throw new common_1.UnauthorizedException('Password not correct');
+            }
+            const { password, ...userData } = user.toObject();
+            const accessToken = this.jwtService.sign({
+                id: userData._id,
+                email: userData.email,
+                role: userData.role,
+            }, { expiresIn: '15m' });
+            const refreshToken = this.jwtService.sign({
+                id: userData._id,
+                email: userData.email,
+                role: userData.role,
+            }, { expiresIn: '7d' });
+            return {
+                message: 'User login successfully',
+                userData,
+                accessToken,
+                refreshToken,
+            };
+        }
+        catch (error) {
+            if (error instanceof common_1.UnauthorizedException ||
+                error instanceof common_1.BadRequestException) {
+                throw error;
+            }
+            throw new common_1.InternalServerErrorException(error?.message ||
+                'Something went wrong while checking login credentials');
+        }
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(auth_schema_1.User.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
