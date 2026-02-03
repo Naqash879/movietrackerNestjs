@@ -37,7 +37,4 @@ export declare class AuthController {
         accessToken: string;
         refreshToken: string;
     }>;
-    test(): {
-        message: string;
-    };
 }

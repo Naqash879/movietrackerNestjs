@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signUp.dto';
 import { LoginDto } from './dto/login.dto';
@@ -33,8 +33,8 @@ export class AuthController {
 
     return { message, userData, accessToken, refreshToken };
   }
-  @Get('test')
-  test() {
-    return { message: 'this controller' };
-  }
+  //   @Get('test')
+  //   test(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  //     return { method: req.method, token: req.cookies.token };
+  //   }
 }
