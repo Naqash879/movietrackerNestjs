@@ -1,9 +1,10 @@
+import { useAddMovieMutaton } from "../hooks/admin.hooks";
 type AddMovieModalProps = {
   onClose: () => void;
-  onAdd: (movie: any) => void;
 };
 
-export default function AddMovieModal({ onClose, onAdd }: AddMovieModalProps) {
+export default function AddMovieModal({ onClose }: AddMovieModalProps) {
+  const addMovieMutation = useAddMovieMutaton();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -15,7 +16,6 @@ export default function AddMovieModal({ onClose, onAdd }: AddMovieModalProps) {
     if (!file) return;
 
     const newMovie = {
-      id: Date.now().toString(),
       image: file,
       name: (form.elements.namedItem("name") as HTMLInputElement).value,
       description: (
@@ -27,12 +27,8 @@ export default function AddMovieModal({ onClose, onAdd }: AddMovieModalProps) {
       rating: Number(
         (form.elements.namedItem("rating") as HTMLInputElement).value,
       ),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
-
-    console.log(newMovie);
-    onAdd(newMovie);
+    addMovieMutation.mutate(newMovie);
     onClose();
   };
 

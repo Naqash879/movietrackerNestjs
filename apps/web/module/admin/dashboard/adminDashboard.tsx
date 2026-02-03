@@ -79,12 +79,7 @@ export default function AdminDashboard() {
             ))}
           </tbody>
         </table>
-        {open && (
-          <AddMovieModal
-            onClose={() => setOpen(false)}
-            onAdd={(movie) => setMovies((prev) => [...prev, movie])}
-          />
-        )}
+        {open && <AddMovieModal onClose={() => setOpen(false)} />}
       </div>
     </div>
   );
