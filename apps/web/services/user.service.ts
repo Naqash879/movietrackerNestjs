@@ -12,5 +12,11 @@ export const signUp = async (data: TSignUp) => {
   }
 };
 export const loginCheck = async (data: TLogin) => {
-  console.log("this login service", data);
+  try {
+    const res = await axiosRequest.post("/auth/loginCheck", data);
+    return res;
+  } catch (error) {
+    const { message } = handleError(error);
+    throw new Error(message);
+  }
 };
