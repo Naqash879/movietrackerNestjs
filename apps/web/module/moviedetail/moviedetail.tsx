@@ -1,9 +1,14 @@
 "use client";
-import Image from "next/image";
 import Header from "../header/header";
 import { useState } from "react";
-export default function MovieDetail() {
+import { useGetMovieById } from "../admin/hooks/admin.hooks";
+export default function MovieDetail({ movieId }: { movieId: string }) {
   const [search, setSearch] = useState<string>("");
+  const { data: movie, isLoading, isError } = useGetMovieById(movieId);
+  console.log("this is movie data", movie);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error loading movie</p>;
   return (
     <>
       <Header setSearch={setSearch} />
@@ -14,10 +19,9 @@ export default function MovieDetail() {
           <div className="bg-white md:flex flex-col w-full rounded-xl shadow overflow-hidden">
             <div className=" md:flex">
               <div className="relative w-full h-40 md:h-100 md:w-1/2 lg:w-1/4 bg-gray-100 flex items-center justify-center">
-                <Image
-                  src="/images/Component1.png"
-                  alt="Cover"
-                  fill
+                <img
+                  src={movie.image}
+                  alt={movie.name}
                   className="object-cover md:object-fill"
                   sizes="200vw"
                 />
@@ -25,13 +29,11 @@ export default function MovieDetail() {
               <div className="flex flex-col">
                 <div className="px-4 pt-3">
                   <h3 className="text-lg font-semibold">Card Title</h3>
-                  <p>The Gray Man</p>
+                  <p>{movie.name}</p>
                 </div>
                 <div className="px-4 pb-4 pt-1 md:pt-4">
                   <h3 className="text-lg font-semibold">Card Description</h3>
-                  <p className="text-sm text-gray-600">
-                    Yeh short description hai jo card ke neeche show hogi.
-                  </p>
+                  <p className="text-sm text-gray-600">{movie.description}</p>
                 </div>
               </div>
             </div>
@@ -40,11 +42,17 @@ export default function MovieDetail() {
               <div className="px-4 pb-4 pt-1 flex justify-between">
                 <p className="font-bold">
                   Reviews:
-                  <span className="text-[14px] text-gray-300"> 8k</span>{" "}
+                  <span className="text-[14px] text-gray-300">
+                    {" "}
+                    {movie.reviews}k
+                  </span>{" "}
                 </p>
                 <p className="font-bold">
                   Rating:
-                  <span className="text-[14px] text-gray-300"> 8/10</span>{" "}
+                  <span className="text-[14px] text-gray-300">
+                    {" "}
+                    {movie.rating}/10
+                  </span>{" "}
                 </p>
               </div>
               <div className="px-4 pb-4 pt-1 flex justify-between">
@@ -52,12 +60,15 @@ export default function MovieDetail() {
                   Created-At:{" "}
                   <span className="text-[14px] text-gray-300">
                     {" "}
-                    03/02/2026
+                    {movie.createdAt}
                   </span>{" "}
                 </p>
                 <p className="font-bold">
                   Updated-At:{" "}
-                  <span className="text-[14px] text-gray-300"> 03/02/2026</span>
+                  <span className="text-[14px] text-gray-300">
+                    {" "}
+                    {movie.updatedAt}
+                  </span>
                 </p>
               </div>
             </div>

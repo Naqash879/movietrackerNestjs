@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useAddMovieMutaton } from "../hooks/admin.hooks";
 type AddMovieModalProps = {
   onClose: () => void;
@@ -12,24 +13,27 @@ export default function AddMovieModal({ onClose }: AddMovieModalProps) {
     const fileInput = form.elements.namedItem("image") as HTMLInputElement;
 
     const file = fileInput.files?.[0];
-
-    if (!file) return;
+    const rating = Number(
+      (form.elements.namedItem("reviews") as HTMLInputElement).value,
+    );
+    const reviews = Number(
+      (form.elements.namedItem("rating") as HTMLInputElement).value,
+    );
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const description = (
+      form.elements.namedItem("description") as HTMLTextAreaElement
+    ).value;
+    if (!file) return toast.error("image required");
 
     const newMovie = {
       image: file,
-      name: (form.elements.namedItem("name") as HTMLInputElement).value,
-      description: (
-        form.elements.namedItem("description") as HTMLTextAreaElement
-      ).value,
-      reviews: Number(
-        (form.elements.namedItem("reviews") as HTMLInputElement).value,
-      ),
-      rating: Number(
-        (form.elements.namedItem("rating") as HTMLInputElement).value,
-      ),
+      name: name,
+      description: description,
+      reviews: reviews,
+      rating: rating,
     };
     addMovieMutation.mutate(newMovie);
-    onClose();
+    //onClose();
   };
 
   return (
@@ -44,14 +48,12 @@ export default function AddMovieModal({ onClose }: AddMovieModalProps) {
             accept="image/*"
             placeholder="Image URL"
             className="w-full border p-2 rounded"
-            required
           />
 
           <input
             name="name"
             placeholder="Movie Name"
             className="w-full border p-2 rounded"
-            required
           />
 
           <textarea
@@ -59,7 +61,6 @@ export default function AddMovieModal({ onClose }: AddMovieModalProps) {
             placeholder="Description"
             className="w-full border p-2 rounded"
             rows={3}
-            required
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -68,17 +69,15 @@ export default function AddMovieModal({ onClose }: AddMovieModalProps) {
               type="number"
               placeholder="Reviews"
               className="border p-2 rounded"
-              required
             />
             <input
               name="rating"
               type="number"
               step="0.1"
-              min="0"
+              min=""
               max="10"
               placeholder="Rating (0–10)"
               className="border p-2 rounded"
-              required
             />
           </div>
 

@@ -20,3 +20,12 @@ export const loginCheck = async (data: TLogin) => {
     throw new Error(message);
   }
 };
+export const logout = async () => {
+  try {
+    const res = await axiosRequest.get("/auth/logout");
+    return res;
+  } catch (err) {
+    const { message } = handleError(err);
+    throw new Error(message);
+  }
+};

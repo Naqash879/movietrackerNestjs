@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, Req } from '@nestjs/common';
+import { Body, Controller, Post, Res, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signUp.dto';
 import { LoginDto } from './dto/login.dto';
@@ -17,24 +17,42 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { message, userData, accessToken, refreshToken } =
-      await this.authService.loginCheck(dto);
+    const response = await this.authService.loginCheck(dto);
+    const { message, accessToken, refreshToken } = response;
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
+      sameSite: 'lax',
+      secure: false,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: 'lax',
+      secure: false,
     });
 
-    return { message, userData, accessToken, refreshToken };
+    // return { message, userData, accessToken, refreshToken };
+    return { message };
   }
-  //   @Get('test')
-  //   test(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-  //     return { method: req.method, token: req.cookies.token };
-  //   }
+  @Get('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+    });
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+    });
+
+    return { message: 'Successfully logout' };
+  }
+  // @Get('testtoken')
+  // test(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  //   return { method: req.method, token: req.cookies.accessToken };
+  // }
 }
