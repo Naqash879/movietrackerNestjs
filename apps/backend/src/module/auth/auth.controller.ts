@@ -18,7 +18,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const response = await this.authService.loginCheck(dto);
-    const { message, accessToken, refreshToken } = response;
+    const { message, userData, accessToken, refreshToken } = response;
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       maxAge: 15 * 60 * 1000,
@@ -34,7 +34,7 @@ export class AuthController {
     });
 
     // return { message, userData, accessToken, refreshToken };
-    return { message };
+    return { message, userData };
   }
   @Get('logout')
   logout(@Res({ passthrough: true }) res: Response) {
@@ -48,7 +48,11 @@ export class AuthController {
       sameSite: 'lax',
       secure: false,
     });
-
+    res.clearCookie('last_admin_route', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+    });
     return { message: 'Successfully logout' };
   }
   // @Get('testtoken')

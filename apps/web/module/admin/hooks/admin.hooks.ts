@@ -10,13 +10,13 @@ import { logout } from "@/services/user.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TUpdateMovie, TAddMovie } from "../schemas/admin.schema";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export const useAddMovieMutaton = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (newAddMovie: TAddMovie) => await addMovie(newAddMovie),
     onSuccess: (res) => {
-      //console.log(res);
       toast.success("Add Movie Successfully");
       queryClient.invalidateQueries({
         queryKey: ["movies"],
@@ -73,10 +73,12 @@ export const useGetMovieById = (id: string) => {
   });
 };
 export const useLogoutMutation = () => {
+  const route = useRouter();
   return useMutation({
     mutationFn: async () => await logout(),
     onSuccess: (res) => {
       toast.success("Logout Successfully");
+      route.push("/");
     },
     onError: (err) => {
       const { message } = handleError(err);

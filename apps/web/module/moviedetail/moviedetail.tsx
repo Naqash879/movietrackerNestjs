@@ -2,13 +2,18 @@
 import Header from "../header/header";
 import { useState } from "react";
 import { useGetMovieById } from "../admin/hooks/admin.hooks";
+import { useRouter } from "next/navigation";
 export default function MovieDetail({ movieId }: { movieId: string }) {
   const [search, setSearch] = useState<string>("");
   const { data: movie, isLoading, isError } = useGetMovieById(movieId);
-  console.log("this is movie data", movie);
+  const route = useRouter();
+  //console.log("this is movie data", movie);
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading movie</p>;
+  const handleAdmin = () => {
+    route.push("/admin/dashboard");
+  };
   return (
     <>
       <Header setSearch={setSearch} />
@@ -17,7 +22,10 @@ export default function MovieDetail({ movieId }: { movieId: string }) {
       ) : (
         <div className="grid grid-cols-1 sm:flex flex-row gap-6">
           <div className="bg-white md:flex flex-col w-full rounded-xl shadow overflow-hidden">
-            <div className=" md:flex">
+            <button className="text-green-400" onClick={() => handleAdmin()}>
+              Go To Admin
+            </button>
+            <div className=" md:flex pt-4">
               <div className="relative w-full h-40 md:h-100 md:w-1/2 lg:w-1/4 bg-gray-100 flex items-center justify-center">
                 <img
                   src={movie.image}

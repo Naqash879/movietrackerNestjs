@@ -14,7 +14,7 @@ export const signUp = async (data: TSignUp) => {
 export const loginCheck = async (data: TLogin) => {
   try {
     const res = await axiosRequest.post("/auth/loginCheck", data);
-    return res;
+    return res.data;
   } catch (error) {
     const { message } = handleError(error);
     throw new Error(message);

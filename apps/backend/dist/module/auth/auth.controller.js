@@ -28,7 +28,7 @@ let AuthController = class AuthController {
     }
     async login(dto, res) {
         const response = await this.authService.loginCheck(dto);
-        const { message, accessToken, refreshToken } = response;
+        const { message, userData, accessToken, refreshToken } = response;
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             maxAge: 15 * 60 * 1000,
@@ -41,7 +41,7 @@ let AuthController = class AuthController {
             sameSite: 'lax',
             secure: false,
         });
-        return { message };
+        return { message, userData };
     }
     logout(res) {
         res.clearCookie('accessToken', {
@@ -50,6 +50,11 @@ let AuthController = class AuthController {
             secure: false,
         });
         res.clearCookie('refreshToken', {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: false,
+        });
+        res.clearCookie('last_admin_route', {
             httpOnly: true,
             sameSite: 'lax',
             secure: false,
