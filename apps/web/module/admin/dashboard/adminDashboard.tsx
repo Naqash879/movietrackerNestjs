@@ -42,8 +42,10 @@ export default function AdminDashboard() {
   };
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🎬 Movies Admin Dashboard</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-x-2 space-y-2">
+        <h1 className="text-[20px] font-bold sm:text-2xl">
+          🎬 Movies Admin Dashboard
+        </h1>
         <div className="space-x-2 space-y-2">
           <button
             onClick={() => setOpen(true)}

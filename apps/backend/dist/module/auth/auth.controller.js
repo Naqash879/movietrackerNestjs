@@ -31,7 +31,7 @@ let AuthController = class AuthController {
         const { message, userData, accessToken, refreshToken } = response;
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            maxAge: 15 * 60 * 1000,
+            maxAge: 20 * 60 * 1000,
             sameSite: 'lax',
             secure: false,
         });
@@ -61,6 +61,20 @@ let AuthController = class AuthController {
         });
         return { message: 'Successfully logout' };
     }
+    async refreshToken(req, res) {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            throw new common_1.UnauthorizedException('Refresh token not found');
+        }
+        const newAccessToken = await this.authService.refreshAccessToken(refreshToken);
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: true,
+            maxAge: 20 * 60 * 1000,
+            sameSite: 'lax',
+            secure: false,
+        });
+        return { message: 'Access token refreshed successfully' };
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -85,6 +99,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
+__decorate([
+    (0, common_1.Get)('refresh'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "refreshToken", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -1,10 +1,11 @@
-import Cookies from "js-cookie";
 import { NextRequest, NextResponse } from "next/server";
 
 export function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
-
+  if (pathname === "/auth/refresh") {
+    return NextResponse.next();
+  }
   const token = request.cookies.get("accessToken")?.value;
 
   const PUBLIC_ROUTES = ["/login", "/signup"];

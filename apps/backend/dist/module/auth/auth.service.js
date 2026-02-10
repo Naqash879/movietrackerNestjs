@@ -70,12 +70,12 @@ let AuthService = class AuthService {
             if (!checkPassword) {
                 throw new common_1.UnauthorizedException('Password not correct');
             }
-            const { password, ...userData } = user.toObject();
+            const { ...userData } = user.toObject();
             const accessToken = this.jwtService.sign({
                 id: userData._id,
                 email: userData.email,
                 role: userData.role,
-            }, { expiresIn: '15m' });
+            }, { expiresIn: '20m' });
             const refreshToken = this.jwtService.sign({
                 id: userData._id,
                 email: userData.email,
@@ -95,6 +95,27 @@ let AuthService = class AuthService {
             }
             throw new common_1.InternalServerErrorException(error?.message ||
                 'Something went wrong while checking login credentials');
+        }
+    }
+    async refreshAccessToken(refreshToken) {
+        try {
+            const payload = this.jwtService.verify(refreshToken);
+            const user = await this.userModel.findById(payload.id);
+            if (!user) {
+                throw new common_1.UnauthorizedException('User not found');
+            }
+            const newAccessToken = this.jwtService.sign({
+                id: payload.id,
+                email: payload.email,
+                role: payload.role,
+            }, { expiresIn: '20m' });
+            return newAccessToken;
+        }
+        catch (error) {
+            if (error instanceof common_1.UnauthorizedException) {
+                throw error;
+            }
+            throw new common_1.InternalServerErrorException(error?.message || 'Something went wrong while refreshing access token');
         }
     }
 };

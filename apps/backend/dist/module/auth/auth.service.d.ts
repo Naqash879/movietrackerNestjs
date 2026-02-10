@@ -30,6 +30,7 @@ export declare class AuthService {
             schema: import("mongoose").Schema;
             name: string;
             email: string;
+            password: string;
             role: string;
             __v: number;
             id: string;
@@ -37,4 +38,5 @@ export declare class AuthService {
         accessToken: string;
         refreshToken: string;
     }>;
+    refreshAccessToken(refreshToken: string): Promise<string>;
 }

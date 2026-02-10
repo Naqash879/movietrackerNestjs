@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Res, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Res,
+  Req,
+  Get,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signUp.dto';
 import { LoginDto } from './dto/login.dto';
@@ -21,7 +29,7 @@ export class AuthController {
     const { message, userData, accessToken, refreshToken } = response;
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 20 * 60 * 1000,
       sameSite: 'lax',
       secure: false,
     });
@@ -54,6 +62,26 @@ export class AuthController {
       secure: false,
     });
     return { message: 'Successfully logout' };
+  }
+  @Get('refresh')
+  async refreshToken(
+    @Req() req: Request & { cookies: { refreshToken?: string } },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies.refreshToken;
+    //console.log('Received refresh token:', refreshToken);
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+    const newAccessToken =
+      await this.authService.refreshAccessToken(refreshToken);
+    res.cookie('accessToken', newAccessToken, {
+      httpOnly: true,
+      maxAge: 20 * 60 * 1000,
+      sameSite: 'lax',
+      secure: false,
+    });
+    return { message: 'Access token refreshed successfully' };
   }
   // @Get('testtoken')
   // test(@Req() req: Request, @Res({ passthrough: true }) res: Response) {

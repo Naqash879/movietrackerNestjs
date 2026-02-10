@@ -1,7 +1,7 @@
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signUp.dto';
 import { LoginDto } from './dto/login.dto';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
@@ -30,6 +30,7 @@ export declare class AuthController {
             schema: import("mongoose").Schema;
             name: string;
             email: string;
+            password: string;
             role: string;
             __v: number;
             id: string;
@@ -38,4 +39,11 @@ export declare class AuthController {
     logout(res: Response): {
         message: string;
     };
+    refreshToken(req: Request & {
+        cookies: {
+            refreshToken?: string;
+        };
+    }, res: Response): Promise<{
+        message: string;
+    }>;
 }

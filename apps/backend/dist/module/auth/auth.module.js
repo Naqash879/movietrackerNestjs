@@ -13,12 +13,14 @@ const auth_service_1 = require("./auth.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const auth_schema_1 = require("./schema/auth.schema");
 const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            config_1.ConfigModule.forRoot(),
             mongoose_1.MongooseModule.forFeature([{ name: auth_schema_1.User.name, schema: auth_schema_1.UserSchema }]),
             jwt_1.JwtModule.register({
                 secret: process.env.SECRET_KEY || 'mysecretkey',

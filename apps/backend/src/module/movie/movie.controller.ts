@@ -17,10 +17,14 @@ import { MovieDto } from './dto/movie.dto';
 import MovieService from './movie.service';
 import { multerMemory } from 'src/config/multer.config';
 import { UpdateMovieDto } from './dto/movieUpdateDto';
+import { AuthGuard } from '@nestjs/passport';
+import { UseGuards } from '@nestjs/common';
+//import { JwtPayload } from '../auth/strategies/jwt.strategy';
 
 @Controller('admin')
 export default class MovieController {
   constructor(private movieService: MovieService) {}
+  @UseGuards(AuthGuard('jwt'))
   @Post('addmovie')
   @UseInterceptors(FileInterceptor('image', multerMemory))
   async addMovie(
@@ -40,17 +44,20 @@ export default class MovieController {
     const res = await this.movieService.getMovies();
     return { data: res };
   }
+  @UseGuards(AuthGuard('jwt'))
   @Get('getMovieById/:id')
   async getMovieById(@Param('id') id: string) {
     const res = await this.movieService.getMovieById(id);
     return { data: res };
   }
+  @UseGuards(AuthGuard('jwt'))
   @Delete('deletemovie/:id')
   async deleteMovie(@Param('id') id: string) {
     const res = await this.movieService.deleteMovie(id);
 
     return { data: res };
   }
+  @UseGuards(AuthGuard('jwt'))
   @Put('updateMovie/:_id')
   @UseInterceptors(FileInterceptor('image', multerMemory))
   async updateMovie(
